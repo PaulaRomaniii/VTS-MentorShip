@@ -1,0 +1,25 @@
+function manageVacationRequest(employeeId, startDate, endDate):
+    if not isAuthenticated(employeeId):
+        return "Authentication Failed"
+
+    if not isValidDateRange(startDate, endDate):
+        return "Invalid Dates"
+
+    if not hasEnoughBalance(employeeId, startDate, endDate):
+        return "Insufficient Balance"
+
+    requestId = createVacationRequest(employeeId, startDate, endDate, "Pending")
+
+    sendToManager(employeeId, requestId)
+
+    managerDecision = getManagerDecision(requestId)
+
+    if managerDecision == "Approved":
+        updateBalance(employeeId, startDate, endDate)
+        updateRequestStatus(requestId, "Approved")
+        sendToEmployee(employeeId, "Your vacation is approved")
+    else:
+        updateRequestStatus(requestId, "Rejected")
+        sendToEmployee(employeeId, "Your vacation request was rejected")
+
+    return "Process Completed"
